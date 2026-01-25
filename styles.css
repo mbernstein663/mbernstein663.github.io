@@ -76,7 +76,8 @@ a:hover { text-decoration: underline; }
 
 .card {
   grid-column: span 6;
-  background: var(--card);
+  background: rgba(18, 22, 27, 0.9);
+  backdrop-filter: blur(6px);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 16px;
