@@ -1,0 +1,87 @@
+:root {
+  --bg: #0b0d10;
+  --card: #12161b;
+  --text: #e9eef5;
+  --muted: #a9b4c0;
+  --border: #24303b;
+  --accent: #7dd3fc;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container { max-width: 980px; margin: 0 auto; padding: 24px; }
+
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0 22px; }
+.brand { font-weight: 700; letter-spacing: 0.3px; }
+.links { display: flex; gap: 14px; }
+
+.hero { padding: 20px 0 10px; }
+.hero h1 { font-size: 42px; margin: 8px 0; line-height: 1.1; }
+.hero p { max-width: 720px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #001018;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.button.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.section { margin-top: 34px; }
+.section h2 { margin-bottom: 6px; font-size: 22px; }
+.muted { color: var(--muted); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.card {
+  grid-column: span 6;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+.card:hover { transform: translateY(-2px); border-color: #355064; }
+
+.card h3 { margin: 0 0 8px; font-size: 18px; }
+.card p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.actions { display: flex; gap: 12px; margin-top: 12px; }
+
+.bullets { color: var(--muted); line-height: 1.7; }
+
+.footer { margin: 40px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+@media (max-width: 800px) {
+  .card { grid-column: span 12; }
+  .hero h1 { font-size: 34px; }
+}
