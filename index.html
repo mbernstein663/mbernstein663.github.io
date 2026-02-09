@@ -91,3 +91,25 @@ author_profile: true
     if (el) el.textContent = new Date().getFullYear();
   })();
 </script>
+
+
+<!-- scrolling function -->
+<script>
+  (function () {
+    var track = document.getElementById("projectTrack");
+    if (!track) return;
+
+    function scrollByCards(dir) {
+      var card = track.querySelector(".project-card");
+      var amount = card ? (card.getBoundingClientRect().width + 16) : 320;
+      track.scrollBy({ left: dir * amount, behavior: "smooth" });
+    }
+
+    var leftBtn = document.querySelector(".slider-btn.left");
+    var rightBtn = document.querySelector(".slider-btn.right");
+
+    if (leftBtn) leftBtn.addEventListener("click", function(){ scrollByCards(-1); });
+    if (rightBtn) rightBtn.addEventListener("click", function(){ scrollByCards(1); });
+  })();
+</script>
+
