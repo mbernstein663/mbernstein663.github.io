@@ -1,0 +1,228 @@
+---
+title: "Stats Final- Matthew Bernstein"
+format: pdf
+editor: visual
+---
+
+## Q1B
+
+```{r}
+load("Q1B.Rdata")
+obj <- load("Q1B.Rdata")
+obj
+
+# head(df, 200)
+```
+
+Training/Test Split:
+
+```{r}
+set.seed(1234)
+train.prop <- 0.70
+trnset <- sort(sample(1:nrow(df), ceiling(nrow(df)*train.prop)))
+
+train.set <- df[trnset, ]
+test.set  <- df[-trnset, ]
+```
+
+```{r}
+library(caret)
+
+contpredcols <- 2:101
+keepcols <- c("y")
+
+normParam <- preProcess(train.set[, contpredcols],method = c("center", "scale"))
+
+data.train <- cbind(train.set[, keepcols, drop = FALSE],predict(normParam, train.set[, contpredcols]))
+data.test <- cbind(test.set[, keepcols, drop = FALSE],predict(normParam, test.set[, contpredcols]))
+
+
+```
+
+#### Model:
+
+```{r}
+library(glmnet)
+
+X <- model.matrix(y ~ . - 1, data = data.train)
+y <- data.train$y
+
+cvfit <- cv.glmnet(X, y, alpha = 1)
+plot(cvfit)
+best_lambda <- cvfit$lambda.min
+(cvfit$lambda.min)
+lasso_mod <- glmnet(X, y, alpha = 1, lambda = best_lambda)
+coef(lasso_mod)
+
+
+```
+
+```{r}
+mlr <- lm(y ~ X6+X8+X9+X12+X24+X36+X40+X56+X58+X62+X64+X65+X96, data = train.set)
+
+summary(mlr)
+```
+
+```{r}
+y_test_actual <- data.test$y
+y_test_pred   <- predict(mlr, newdata = data.test)
+
+mse_test  <- mean((y_test_actual - y_test_pred)^2)
+rmse_test <- sqrt(mse_test)
+mae_test  <- mean(abs(y_test_actual - y_test_pred))
+
+rss <- sum((y_test_actual - y_test_pred)^2)
+tss <- sum((y_test_actual - mean(y_test_actual))^2)
+r2_test <- 1 - rss/tss
+
+test_results <- data.frame(Metric = c("MSE", "RMSE", "MAE", "R-squared"),Value  = c(mse_test, rmse_test, mae_test, r2_test))
+
+print(test_results)
+
+
+```
+
+#### Code used for analysis:
+
+```{r}
+# y_test_pred_ridge <- as.vector(predict(ridge, newx = X_test, s = "lambda.min"))
+# 
+# 
+# mse_ridge  <- mean((y_test_actual - y_test_pred_ridge)^2)
+# rmse_ridge <- sqrt(mse_ridge)
+# mae_ridge  <- mean(abs(y_test_actual - y_test_pred_ridge))
+# 
+# rss_ridge <- sum((y_test_actual - y_test_pred_ridge)^2)
+# tss       <- sum((y_test_actual - mean(y_test_actual))^2)
+# r2_ridge  <- 1 - rss_ridge/tss
+# 
+# ridge_results <- data.frame(
+#   Metric = c("MSE", "RMSE", "MAE", "R-squared"),
+#   Value  = c(mse_ridge, rmse_ridge, mae_ridge, r2_ridge)
+# )
+# 
+# ridge_results
+
+```
+
+```{r}
+# y_test_pred_enet <- as.vector(predict(enet, newx = X_test, s = "lambda.min"))
+# 
+# 
+# mse_enet  <- mean((y_test_actual - y_test_pred_enet)^2)
+# rmse_enet <- sqrt(mse_enet)
+# mae_enet  <- mean(abs(y_test_actual - y_test_pred_enet))
+# 
+# rss_enet <- sum((y_test_actual - y_test_pred_enet)^2)
+# r2_enet  <- 1 - rss_enet/tss
+# 
+# enet_results <- data.frame(
+#   Metric = c("MSE", "RMSE", "MAE", "R-squared"),
+#   Value  = c(mse_enet, rmse_enet, mae_enet, r2_enet)
+# )
+# 
+# enet_results
+
+```
+
+```{r}
+# #install.packages("ppcor")
+# library(ppcor)
+# car::vif(mlr) 
+# 
+# #install.packages("olsrr")
+# library(olsrr)
+# (mod.condind <- ols_eigen_cindex(mlr)[,2])
+# (mod.condnum <- max(mod.condind)/min(mod.condind))
+```
+
+```{r}
+# mlr1 <- lm(y ~ X1+X6+X8+X9+X11+X12+X19+X22+X24+X29+X31+X39+X40+X48+X49+X55+X56+X58+X62+X64+X69+X81+X91+X92+X95+X96+X99, data = train.set)
+# summary(mlr1)
+# car::vif(mlr1)
+```
+
+```{r}
+# par(mfrow=c(2,2))
+# plot(mlr)
+```
+
+```{r}
+# y_actual <- data.train$y
+# y_pred   <- predict(mlr, newdata = data.train)
+# 
+# if (is.null(rownames(data.train))) {
+#   rownames(data.train) <- 1:nrow(data.train)
+# }
+# 
+# par(mfrow = c(1,1))
+# plot(y_actual, y_pred,
+#      col = 4, cex = 0.6,
+#      xlab = "Actual y",
+#      ylab = "Predicted y",
+#      axes = FALSE)
+# 
+# 
+# res <- residuals(mlr)
+# extpts <- which(abs(res) > 2 * sd(res))
+# # 
+# # 
+# axis(1); axis(2)
+# grid()
+# abline(0, 1, col = 4, lwd = 2)
+```
+
+```{r}
+# y_test_actual <- data.test$y
+# y_test_pred   <- predict(mlr, newdata = data.test)
+# 
+# plot(y_test_actual, y_test_pred,
+#      col = "purple", cex = 0.6,
+#      xlab = "Actual (Test)",
+#      ylab = "Predicted (Test)")
+# abline(0,1,col="purple",lwd=2)
+# grid()
+
+
+```
+
+```{r}
+# par(mfrow=c(1,1))
+# 
+# plot(rstandard(mlr)^2, hatvalues(mlr),
+#      pch = 19, cex = 0.5, col = "blue",
+#      xlab = "Squared Standardized Residuals",
+#      ylab = "Leverage")
+
+```
+
+```{r}
+
+# ridge <- cv.glmnet(X, y,alpha        = 0,  standardize  = FALSE, type.measure = "mse",nfolds = 10)
+# 
+# 
+# plot(ridge)
+# 
+# ridge$lambda.min
+# coef(ridge, s = "lambda.min")
+
+```
+
+```{r}
+# enet <- cv.glmnet(X, y, alpha=0.5, standardize=FALSE, type.measure = "mse", nfolds = 10)
+# 
+# plot(enet)
+# (enet$lambda.min)
+# coef(enet, s = "lambda.min")
+```
+
+```{r}
+# lasso_mse <- cvfit$cvm[cvfit$lambda == cvfit$lambda.min]
+# enet_mse  <- enet$cvm[enet$lambda == enet$lambda.min]
+# 
+# c(Lasso = lasso_mse,
+#   ElasticNet = enet_mse,
+#   Ridge = ridge_mse)
+
+
+```

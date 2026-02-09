@@ -1,0 +1,85 @@
+---
+title: "Q2"
+author: "Matt Bernstein"
+format: pdf
+editor: visual
+---
+
+## Q2:
+
+```{r}
+set.seed(123457)
+obj <- load("Q2.Rdata")
+obj
+df2 <- df
+# head(df2, 200)
+# str(df2)
+# summary(df2)
+```
+
+|   | MAE | Residual Dev (dof) | Null Dev (dof) | Dispersion Parameter | AIC |
+|------------|------------|------------|------------|------------|------------|
+| **Poisson** | 22.36857 | 595.90 (35) | 663.57 (39) | 17.025 | 826.4404 |
+| **Quasi-Poisson** | 22.36857 | 595.90 (35) | 663.57 (39) | 13.918 | NA |
+| **Negative Binomial** | 22.39681 | 44.39 (35) | 47.60 (39) | 2.465 | 394.41 |
+| **Negative Binomial (Reduced)** | 22.37500 | 44.40 (35) | 47.45 (39) | 2.456 | 388.55 |
+
+### Fitting the model:
+
+```{r}
+library(MASS)
+carcar.nbf <- glm.nb(lfc ~ Lat+LBW+ELE+SMR, data = df2)
+summary(carcar.nbf)
+```
+
+```{r}
+carcar.fit <- glm.nb(lfc ~ SMR, data = df2)
+summary(carcar.fit)
+```
+
+#### Code used for analysis:
+
+```{r}
+# carcar.pn <- glm(lfc ~ 1, family = 'poisson', data = df2)
+# summary(carcar.pn)
+# carcar.pf <- glm(lfc ~ Lat+LBW+ELE+SMR, family = 'poisson', data = df2)
+# summary(carcar.pf)
+```
+
+```{r}
+# AIC(carcar.pn, carcar.pf)
+# (disp.est <- carcar.pf$deviance/carcar.pf$df.residual)
+```
+
+```{r}
+# carcar.qpf <- glm(lfc ~ Lat+LBW+ELE+SMR, family = 'quasipoisson', data = df2)
+# summary(carcar.qpf)
+```
+
+```{r}
+# pf <- mean(abs(df2$lfc - fitted(carcar.pf)))
+# qpf <- mean(abs(df2$lfc - fitted(carcar.qpf)))
+# nbf <- mean(abs(df2$lfc - fitted(carcar.nbf)))
+# 
+# less <- mean(abs(df2$lfc - fitted(carcar.less)))
+# 
+# 
+# MAE_list <- c(
+#   Poisson               = pf,
+#   QuasiPoisson          = qpf,
+#   NegativeBinomial      = nbf,
+#   ReducedPoisson        = less,
+# )
+# 
+# (MAE_table <- data.frame(Model = names(MAE_list),MAE   = as.numeric(MAE_list)))
+```
+
+```{r}
+# carcar.nbn <- glm.nb(lfc ~ 1, data = df2)
+# (an.nb <- anova(carcar.nbn, carcar.nbf))
+# print(an.nb$`Pr(Chi)`[2]) 
+```
+
+```{r}
+# hist(df2$lfc, breaks=30, main="", xlab="y")
+```

@@ -1,0 +1,168 @@
+---
+title: "Q1"
+format: pdf
+editor: visual
+---
+
+## Q1A:
+
+```{r}
+load("Q1A.Rdata")
+obj <- load("Q1A.Rdata")
+# obj
+# head(df, 200)
+```
+
+```{r}
+set.seed(123457)
+train.prop <- 0.80
+trnset <- sort(sample(1:nrow(df), ceiling(nrow(df)*train.prop)))
+
+train.set <- df[trnset, ]
+test.set  <- df[-trnset, ]
+```
+
+```{r}
+library(caret)
+
+contpredcols <- 2:101
+keepcols <- c("y")
+
+normParam <- preProcess(train.set[, contpredcols],method = c("center", "scale"))
+
+data.train <- cbind(train.set[, keepcols, drop = FALSE],predict(normParam, train.set[, contpredcols]))
+data.test <- cbind(test.set[, keepcols, drop = FALSE],predict(normParam, test.set[, contpredcols]))
+
+
+```
+
+**Lasso Regression:**
+
+```{r}
+library(glmnet)
+
+X <- model.matrix(y ~ . - 1, data = data.train)
+y <- data.train$y
+
+cvfit <- cv.glmnet(X, y, alpha = 1)
+plot(cvfit)
+best_lambda <- cvfit$lambda.min
+# (cvfit$lambda.min)
+lasso_mod <- glmnet(X, y, alpha = 1, lambda = best_lambda)
+# coef(lasso_mod)
+```
+
+**Full Model Evaluation:**
+
+```{r}
+mlr1 <- lm(y ~ X1+X14+X15+X16+X20+X26+X29+X58+X62+X64+X90, data = train.set)
+summary(mlr1)
+car::vif(mlr1)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(mlr1)
+```
+
+The fit seems to be very good for such a small dataset. In case we can find an even better model, we will search for high influence points & outliers:
+
+```{r}
+y_test_actual <- data.test$y
+y_test_pred   <- predict(mlr1, newdata = data.test)
+
+mse_test  <- mean((y_test_actual - y_test_pred)^2)
+rmse_test <- sqrt(mse_test)
+mae_test  <- mean(abs(y_test_actual - y_test_pred))
+
+rss <- sum((y_test_actual - y_test_pred)^2)
+tss <- sum((y_test_actual - mean(y_test_actual))^2)
+r2_test <- 1 - rss/tss
+
+test_results <- data.frame(Metric = c("MSE", "RMSE", "MAE", "R-squared"),Value  = c(mse_test, rmse_test, mae_test, r2_test))
+
+print(test_results)
+
+```
+
+#### Code used for analysis:
+
+```{r}
+# mlr <- lm(y ~ X1+X14+X15+X16+X20+X26+X29+X51+X58+X62+X64+X90, data = train.set)
+# 
+# summary(mlr)
+```
+
+```{r}
+# hist(df$y, breaks=30, main="", xlab="y")
+```
+
+```{r}
+# #install.packages("ppcor")
+# library(ppcor)
+# car::vif(mlr) 
+# 
+# #install.packages("olsrr")
+# library(olsrr)
+# (mod.condind <- ols_eigen_cindex(mlr)[,2])
+# (mod.condnum <- max(mod.condind)/min(mod.condind))
+```
+
+```{r}
+# y_test_pred_enet <- as.vector(predict(enet, newx = X_test, s = "lambda.min"))
+# 
+# 
+# mse_enet  <- mean((y_test_actual - y_test_pred_enet)^2)
+# rmse_enet <- sqrt(mse_enet)
+# mae_enet  <- mean(abs(y_test_actual - y_test_pred_enet))
+# 
+# rss_enet <- sum((y_test_actual - y_test_pred_enet)^2)
+# r2_enet  <- 1 - rss_enet/tss
+# 
+# enet_results <- data.frame(
+#   Metric = c("MSE", "RMSE", "MAE", "R-squared"),
+#   Value  = c(mse_enet, rmse_enet, mae_enet, r2_enet)
+# )
+# 
+# enet_results
+```
+
+```{r}
+# y_test_pred_ridge <- as.vector(predict(ridge, newx = X_test, s = "lambda.min"))
+# 
+# 
+# mse_ridge  <- mean((y_test_actual - y_test_pred_ridge)^2)
+# rmse_ridge <- sqrt(mse_ridge)
+# mae_ridge  <- mean(abs(y_test_actual - y_test_pred_ridge))
+# 
+# rss_ridge <- sum((y_test_actual - y_test_pred_ridge)^2)
+# tss       <- sum((y_test_actual - mean(y_test_actual))^2)
+# r2_ridge  <- 1 - rss_ridge/tss
+# 
+# ridge_results <- data.frame(
+#   Metric = c("MSE", "RMSE", "MAE", "R-squared"),
+#   Value  = c(mse_ridge, rmse_ridge, mae_ridge, r2_ridge)
+# )
+# 
+# ridge_results
+```
+
+```{r}
+# mlr <- lm(y ~ ., data = data.train) # mlrint <- lm(y ~ .^2, data = data.train) # summary(mlrint)
+# comp <- anova(mlr, mlrint) 
+# comp
+```
+
+```{r}
+# step(lm(y ~ ., data = data.train), scope = ~ ., direction = "both")
+```
+
+Lasso:
+
+X1, X14, X15, X16, X20, X26, X29, X51, X58, X62, X64, X90
+
+```{r}
+# plot(enet)
+# (enet$lambda.min)
+# coef(enet, s = "lambda.min")
+```

@@ -1,0 +1,266 @@
+---
+title: "Q3"
+format: pdf
+editor: visual
+fig-dpi: 600
+---
+
+## Q3:
+
+```{r}
+obj <- load("Q3.Rdata")
+df3 <- df
+# head(df3, 100)
+# str(df3)
+# table(df3$y)
+```
+
+```{r}
+#df3$y <- as.factor(ifelse(df3$y == "1", 1, 0))
+col_class <- sapply(1:ncol(df3), function(x) class(df3[, x]))
+
+set.seed(123457)
+train.prop <- 0.80
+strats <- df3$y
+rr <- split(1:length(strats), strats)
+idx <- sort(as.numeric(unlist(sapply(rr, 
+        function(x) sample(x, length(x)*train.prop)))))
+df3.train <- df3[idx, ]
+df3.test <- df3[-idx, ]
+
+```
+
+### Final Model:
+
+```{r}
+library(ranger)
+fit.rf.ranger <- ranger(y ~ ., data = df3.train, probability = FALSE, classification = TRUE, importance = 'impurity', mtry = 3)
+# 
+# summary(fit.rf.rangprint(fit.rf.ranger)er)
+```
+
+```{r}
+#install.packages("vip")
+library(vip)
+(v1 <- vi(fit.rf.ranger))
+vip(v1)
+```
+
+```{r}
+pred <- predict(fit.rf.ranger, data = df3.test)
+test_df <- data.frame(actual = df3.test$y, pred = NA)
+test_df$pred <- pred$predictions
+(conf_matrix_rf <- table(test_df$pred, test_df$actual))
+```
+
+#### Model Comparison:
+
+|                               | Accuracy | Sensitivity | Specificity |
+|-------------------------------|----------|-------------|-------------|
+| **Full Logit**                | .760     | .870        | .361        |
+| **Stepwise Function (Logit)** | .770     | .875        | .389        |
+| **CART**                      | .994     | .996        | .987        |
+| **Random Forest**             | .998     | .999        | .991        |
+| **XGBoost**                   | .998     | .999        | .991        |
+| **SVM**                       | .549     | .863        | .283        |
+
+#### Code used for analysis:
+
+```{r}
+# #| dpi: 300
+# #| fig.width: 7
+# #| fig.height: 5
+# 
+# 
+# num_vars <- c("x1","x2","x3")
+# 
+# par(mfrow = c(2, 2))
+# for (v in num_vars) {
+# hist(df3[[v]],
+# main = paste("Histogram of", v),
+# xlab = v,
+# col = "blue",
+# border = "white")}
+# 
+# boxplot(df3[, num_vars],
+# main = "Boxplots of Predictors x1–x3",
+# ylab = "Value",
+# col="purple")
+```
+
+```{r}
+# set.seed(123457)
+# full.logit <- glm(y ~ . ,data = df3.train, family = binomial(link = "logit"))
+# null.logit <- glm(y ~ 1, data = df3.train, family = binomial(link = "logit"))
+# 
+# summary(full.logit)
+# summary(null.logit)
+```
+
+```{r}
+# both.logit <- step(null.logit, list(lower = formula(null.logit),upper = formula(full.logit)), direction = "both", trace = 0, data = df3.train)
+# summary(both.logit)
+```
+
+```{r}
+# pred.both <- predict(both.logit, newdata = df3.test, type = "response")
+# pred.full <- predict(full.logit, newdata = df3.test, type = "response")
+# 
+# (table.both <- table(pred.both > 0.70, df3.test$y))
+# (table.full <- table(pred.full > 0.70, df3.test$y))
+# 
+# (accuracy.both <- round((sum(diag(table.both))/sum(table.both))*100, 3)) 
+# (accuracy.full <- round((sum(diag(table.full))/sum(table.full))*100, 3))
+```
+
+```{r}
+# library(caret)
+# f <- ifelse(pred.both > 0.75, 1, 0)
+# (cm.both <- confusionMatrix(reference = as.factor(df3.test$y), 
+#             data = as.factor(f), mode = "everything"))
+```
+
+```{r}
+# #| dpi: 300
+# #| fig.width: 7
+# #| fig.height: 5
+# library(pROC)
+# par(mfrow = c(1,1))
+# roc.both <- roc(df3.test$y ~ pred.both, plot = TRUE,
+#                 legacy.axes = TRUE, print.auc = TRUE)
+```
+
+#### CART:
+
+```{r}
+# library(rpart)
+# cart <- rpart(y ~., method = "class", data = df3.train,control = rpart.control(minsplit = 1, cp = 0.001))
+# (rootnode_err <- sum(df3.train$y==1)/nrow(df3.train))
+# printcp(cart)
+```
+
+For what value of CP is xerror the smallest?
+
+```{r}
+# (cp <- cart$cptable[which.min(cart$cptable[, "xerror"]), "CP"])
+```
+
+```{r}
+# #| dpi: 300
+# #| fig.width: 7
+# #| fig.height: 5
+# plotcp(cart)
+```
+
+```{r}
+# test_df <- data.frame(actual = df3.test$y, pred = NA)
+# test_df$pred <- predict(cart, newdata = df3.test, type = "class")
+# (conf_matrix_base <- table(test_df$pred, test_df$actual))
+```
+
+```{r}
+# library(caret)
+# sensitivity(conf_matrix_base)
+# specificity(conf_matrix_base)
+# (mis.rate <- conf_matrix_base[1, 2] + conf_matrix_base[2, 1])/sum(conf_matrix_base) 
+```
+
+```{r}
+# cart2 <- prune(cart, cp = cart$cptable[which.min(cart$cptable[, "xerror"]), "CP"])
+# test_df$pred <- predict(cart2, newdata = df3.test, type = "class")
+# (conf_matrix_pruned <- table(test_df$pred, test_df$actual))
+```
+
+```{r}
+# library(rpart.plot)
+# rpart.plot(cart2, extra = "auto")
+# summary(cart2)
+```
+
+```{r}
+# (xerr.pfit <- cart2$cptable[which.min(cart2$cptable[, "xerror"]), "xerror"])
+```
+
+```{r}
+# library(caret)
+# sensitivity(conf_matrix_pruned)
+# specificity(conf_matrix_pruned)
+# (conf_matrix_pruned[1, 2] + conf_matrix_pruned[2, 1])/sum(conf_matrix_pruned) 
+```
+
+#### Random Forest:
+
+```{r}
+# library(caret)
+# sensitivity(conf_matrix_rf)
+# specificity(conf_matrix_rf)
+# (mis.rate <- conf_matrix_rf[1, 2] + conf_matrix_rf[2, 1])/sum(conf_matrix_rf) 
+
+```
+
+#### XGBoost:
+
+```{r}
+# library(xgboost)
+# library(Matrix)
+# 
+# matrix_predictors.train <- as.matrix(sparse.model.matrix(y ~., data = df3.train))[, -1]
+# matrix_predictors.test <- as.matrix(sparse.model.matrix(y ~., data = df3.test))[, -1]
+```
+
+```{r}
+# pred.train.gbm <- data.matrix(matrix_predictors.train)
+# df3.train.gbm <- as.numeric(as.character(df3.train$y)) 
+# dtrain <- xgb.DMatrix(data = pred.train.gbm, label = df3.train.gbm)
+# 
+# pred.test.gbm <- data.matrix(matrix_predictors.test)
+# df3.test.gbm <- as.numeric(as.character(df3.test$y))
+# dtest <- xgb.DMatrix(data = pred.test.gbm, label = df3.test.gbm)
+```
+
+```{r}
+# watchlist <- list(train = dtrain, test = dtest)
+# param <- list(max_depth = 2, eta = 1, nthread = 2, objective = "binary:logistic", eval_metric = "auc")
+# 
+# model.xgb <- xgb.train(param, dtrain, nrounds = 2, watchlist)
+```
+
+```{r}
+# pred.y.train <- predict(model.xgb, pred.train.gbm)
+# prediction.train <- as.numeric(pred.y.train > 0.7)
+# 
+# (tab<-table(df3.train.gbm, prediction.train))
+```
+
+```{r}
+# library(caret)
+# conf_matrix_gb <- table(test_df$pred, test_df$actual)
+# conf_matrix_gb
+# sensitivity(conf_matrix_gb)
+# specificity(conf_matrix_gb)
+# (conf_matrix_gb[1,2] + conf_matrix_gb[2,1])/sum(conf_matrix_gb) 
+```
+
+#### SVM:
+
+```{r}
+# library(e1071)
+# 
+# df3.train$y <- factor(df3.train$y)
+# df3.test$y  <- factor(df3.test$y, levels = c(0,1))
+# 
+# mod.svm <- svm(y ~ ., data = df3.train, kernel = "radial")
+# 
+# 
+# svm_pred <- predict(mod.svm, newdata = df3.test)
+# 
+# test_df <- data.frame(actual = df3.test$y, pred = svm_pred)
+# conf_matrix_svm <- table(test_df$pred, test_df$actual)
+# conf_matrix_svm
+# 
+# library(caret)
+# sensitivity(conf_matrix_svm)
+# specificity(conf_matrix_svm)
+# (conf_matrix_svm[1, 2] + conf_matrix_svm[2, 1]) / sum(conf_matrix_svm)
+
+```
