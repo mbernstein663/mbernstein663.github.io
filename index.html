@@ -25,33 +25,20 @@ author_profile: true
 <main class="container">
   <section id="projects" class="section">
     <h2>Projects</h2>
-    <p class="muted">Scroll horizontally (or use arrows) to browse.</p>
+    <p class="muted">Scroll horizontally to browse.</p>
 
-    <div class="project-slider">
-      <button class="slider-btn left" type="button" aria-label="Scroll projects left">‹</button>
-
-      <div class="project-track" id="projectTrack" tabindex="0">
-        {% for p in site.data.projects %}
-        <a class="project-card" href="{{ p.url | relative_url }}">
+    <div class="projects-row" aria-label="Project cards">
+      {% for p in site.data.projects %}
+        <a class="p-card" href="{{ p.url | relative_url }}">
           {% if p.image %}
-            <img class="project-thumb" src="{{ p.image | relative_url }}" alt="" loading="lazy" />
+            <img class="p-thumb" src="{{ p.image | relative_url }}" alt="" loading="lazy" />
           {% endif %}
-          <div class="project-body">
-            <div class="project-title">{{ p.title }}</div>
-            <div class="project-desc">{{ p.desc }}</div>
-            {% if p.tags %}
-            <div class="project-tags">
-              {% for t in p.tags %}
-                <span class="tag">{{ t }}</span>
-              {% endfor %}
-            </div>
-            {% endif %}
+          <div class="p-body">
+            <div class="p-title">{{ p.title }}</div>
+            <div class="p-desc">{{ p.desc }}</div>
           </div>
         </a>
-        {% endfor %}
-      </div>
-
-      <button class="slider-btn right" type="button" aria-label="Scroll projects right">›</button>
+      {% endfor %}
     </div>
   </section>
 
