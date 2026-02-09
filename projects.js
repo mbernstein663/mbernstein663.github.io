@@ -1,4 +1,17 @@
-const projects = [];
+const projects = [
+  {
+    title: "Applied Statistics for Data Science Modelling Final (R)",
+    description:
+      "(1) high-dimensional regression with regularization (lasso/ridge/elastic net), (2) count data Poisson → Negative Binomial, and (3) imbalanced binary classification with CART/Random Forest/XGBoost.",
+    tags: ["R", "GLM", "Lasso/Ridge", "NegBin", "Random Forest", "XGBoost"],
+    links: {
+      code: "assets/stats-final/", 
+      writeup: "assets/stats-final/final_report.pdf",
+      demo: "stats-final.html"
+    }
+  }
+];
+
 
 
 function makeLink(label, url) {
