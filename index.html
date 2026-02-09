@@ -2,80 +2,74 @@
 layout: single
 title: "Home"
 permalink: /
+classes: wide
 ---
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Matt Bernstein</title>
-  <meta name="description" content="Portfolio of Matt Bernstein — Data Science, ML, and projects." />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="container">
-    <nav class="nav">
-      <div class="brand">Matt Bernstein</div>
-      <div class="links">
-        <a href="#projects">Projects</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </div>
-    </nav>
+<header class="container">
+  <nav class="nav">
+    <div class="brand">Matt Bernstein</div>
+    <div class="links">
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
 
-    <section class="hero">
-      <h1>Data Science & ML Projects</h1>
-      <p>
-        I’m Matt Bernstein. I build data products, machine learning models, and analytics projects.
-        Here are a few things I’ve shipped and explored.
-      </p>
+  <section class="hero">
+    <h1>Data Science &amp; ML Projects</h1>
+    <p>
+      I’m Matt Bernstein. I build data products, machine learning models, and analytics projects.
+      Here are a few things I’ve shipped and explored.
+    </p>
 
-      <div class="cta">
-        <!-- Replace these with your real links -->
-        <a class="button" href="#projects">View Projects</a>
-        <a class="button ghost" href="https://www.linkedin.com/in/YOUR_LINKEDIN/" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a class="button ghost" href="https://github.com/YOUR_GITHUB" target="_blank" rel="noreferrer">GitHub</a>
-        <!-- If you have a resume PDF, add it to the repo and link it here -->
-        <!-- <a class="button ghost" href="resume.pdf" target="_blank">Resume</a> -->
-      </div>
-    </section>
-  </header>
+    <div class="cta">
+      <a class="button" href="#projects">View Projects</a>
+      <a class="button ghost" href="https://www.linkedin.com/in/YOUR_LINKEDIN/" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a class="button ghost" href="https://github.com/YOUR_GITHUB" target="_blank" rel="noreferrer">GitHub</a>
+      <!-- <a class="button ghost" href="/resume.pdf" target="_blank" rel="noreferrer">Resume</a> -->
+    </div>
+  </section>
+</header>
 
-  <main class="container">
-    <section id="projects" class="section">
-      <h2>Projects</h2>
-      <p class="muted">A curated set of work. Click a card for code, demo, or write-up.</p>
-      <div id="project-grid" class="grid"></div>
-    </section>
+<main class="container">
+  <section id="projects" class="section">
+    <h2>Projects</h2>
+    <p class="muted">A curated set of work. Click a card for code, demo, or write-up.</p>
+    <div id="project-grid" class="grid"></div>
+  </section>
 
-    <section id="about" class="section">
-      <h2>About</h2>
-      <p>
-        I’m focused on applied data science: turning messy data into clear decisions and building
-        models that hold up in real-world use. Interests include ML engineering, analytics, and crypto/AI projects.
-      </p>
-      <ul class="bullets">
-        <li><strong>Skills:</strong> Python, SQL, ML, stats, data viz</li>
-        <li><strong>Tools:</strong> pandas, scikit-learn, PyTorch, Snowflake, Git</li>
-        <li><strong>Currently:</strong> building projects for internships / full-time roles</li>
-      </ul>
-    </section>
+  <section id="about" class="section">
+    <h2>About</h2>
+    <p>
+      I’m focused on applied data science: turning messy data into clear decisions and building
+      models that hold up in real-world use. Interests include ML engineering, analytics, and crypto/AI projects.
+    </p>
+    <ul class="bullets">
+      <li><strong>Skills:</strong> Python, SQL, ML, stats, data viz</li>
+      <li><strong>Tools:</strong> pandas, scikit-learn, PyTorch, Snowflake, Git</li>
+      <li><strong>Currently:</strong> building projects for internships / full-time roles</li>
+    </ul>
+  </section>
 
-    <section id="contact" class="section">
-      <h2>Contact</h2>
-      <p>
-        Email: <a href="mailto:mbernstein663@gmail.com">mbernstein663@gmail.com</a><br/>
-        GitHub: <a href="https://github.com/mbernstein663" target="_blank" rel="noreferrer">@mbernstein663</a><br/>
-        LinkedIn: <a href="https://www.linkedin.com/in/matthew-bernstein-3a3977227/" target="_blank" rel="noreferrer">Profile</a>
-      </p>
-    </section>
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <p>
+      Email: <a href="mailto:mbernstein663@gmail.com">mbernstein663@gmail.com</a><br/>
+      GitHub: <a href="https://github.com/mbernstein663" target="_blank" rel="noreferrer">@mbernstein663</a><br/>
+      LinkedIn: <a href="https://www.linkedin.com/in/matthew-bernstein-3a3977227/" target="_blank" rel="noreferrer">Profile</a>
+    </p>
+  </section>
 
-    <footer class="footer">
-      <span class="muted">© <span id="year"></span> Matt Bernstein</span>
-    </footer>
-  </main>
+  <footer class="footer">
+    <span class="muted">© <span id="year"></span> Matt Bernstein</span>
+  </footer>
+</main>
 
-  <script src="projects.js"></script>
-</body>
-</html>
+<script src="/projects.js"></script>
+<script>
+  // Safe year fill even if JS loads late
+  (function () {
+    var el = document.getElementById("year");
+    if (el) el.textContent = new Date().getFullYear();
+  })();
+</script>
