@@ -1,17 +1,14 @@
 - title: "Statistics Final — Modeling Portfolio"
-  desc: "Model comparison, diagnostics, and classification work with clear write-up + code artifacts."
+  desc: "Model comparison, diagnostics, and classification write-up with code artifacts."
   url: "/stats-final/"
-  tags: ["R", "Modeling", "Reporting"]
   image: "/assets/images/projects/stats-final.png"
 
 - title: "Bittbridge Miner/Validator Model"
-  desc: "Custom model integration + deployment workflow for a subnet miner/validator instance."
+  desc: "Custom model integration + deployment workflow for subnet mining."
   url: "/bittbridge-model/"
-  tags: ["Python", "ML Systems", "Infra"]
   image: "/assets/images/projects/bittbridge.png"
 
-- title: "Kaggle Notebook — <Your Next Project>"
-  desc: "Short description of what you did and what you learned."
+- title: "Kaggle Project"
+  desc: "EDA + modeling with evaluation and clean notebook."
   url: "/kaggle-project/"
-  tags: ["Python", "EDA", "ML"]
   image: "/assets/images/projects/kaggle.png"
