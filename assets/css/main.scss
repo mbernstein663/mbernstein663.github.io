@@ -62,3 +62,10 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+
+.author__avatar img {
+  max-width: 200px;
+  aspect-ratio: 3 / 4;   /* portrait */
+  object-fit: cover;
+}
