@@ -66,6 +66,6 @@
 
 .author__avatar img {
   max-width: 200px;
-  aspect-ratio: 3 / 4;   /* portrait */
+  height: auto;
   object-fit: cover;
 }
